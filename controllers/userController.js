@@ -34,14 +34,15 @@ exports.newUser = async (req, res) => {
 
 exports.preNew = async (req, res) => {
 	try {
+		const parsed = req.body;
 		const user = await PreContestant.create({
-			name: req.body.name,
+			name: parsed.name,
 			phone: {
-				phone1: req.body.phone1,
-				phone2: req.body.phone2
+				phone1: parsed.phone1,
+				phone2: parsed.phone2
 			}
 		})
-
+		
 		res.send(user);
 		
 	} catch (error) {
