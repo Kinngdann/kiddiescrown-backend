@@ -27,7 +27,5 @@ app.use((req, res, next) => {
 
 // Mounting Router
 app.use('/api/user', userRouter);
-
 dbConn();
-
 module.exports = app;

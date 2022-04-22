@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/newUser', upload.any(), newUser);
+router.post('/new', upload.single('picture'), newUser);
 router.post('/pre-register', preNew);
 router.get('/getUsers', getusers);
 router.get('/getUser/:id', getuser);

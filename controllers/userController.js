@@ -1,27 +1,33 @@
 const Contestant = require('../models/userSchema');
 const PreContestant = require('../models/preUserSchema');
+// const stringify = require('../utils/stringifyID');
+
+
+function stringify(n){
+	n = '00' + n.toString();
+	return `${n.slice(-3)}`;
+}
 
 exports.newUser = async (req, res) => {
-	// console.log(req.files)
 	try {
-		// const parsed = JSON.parse(req.body.user);
-		const parsed = req.body;
+		// const parsed = req.body;
+		const parsed = JSON.parse(req.body.user);
 		const user = await Contestant.create({
-			id: '001',
+			id: stringify(await Contestant.countDocuments()+1),
 			name: parsed.name,
 			gender: parsed.gender,
 			age: parsed.age,
 			description: parsed.description,
-			pictures: req.files[0].path,
+			picture: req.file.path,
+			location: parsed.location,
 			phone: {
 				phone1: parsed.phone1,
 				phone2: parsed.phone2
 			},
 			parentName: parsed.parentName,
 			relationship: parsed.relationship,
-		});
-
-		res.send(user);
+		})
+		res.json({id: user.id, name: user.name});
 	} catch (error) {
 		console.log('error', error);
 		console.log('error message', error.message);

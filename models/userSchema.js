@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
 	gender: String,
 	age: Number,
 	description: String,
-	pictures: String,
+	picture: String,
+	location: String,
 	phone: {
 		phone1: String,
 		phone2: String
@@ -29,7 +30,7 @@ const userSchema = new mongoose.Schema({
 	},
 	log: [{ 
 		voteCount: Number,
-		time: Date,
+		time: String,
 		voter: String,
 		method: String
 	}],
