@@ -14,6 +14,12 @@ const {
 	updatePicture
 } = require('../controllers/userController');
 
+const fileType = {
+    'image/jpg': 'jpg',
+    'image/jpeg': 'jpeg',
+    'image/png': 'png',
+}
+
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, PATH);
