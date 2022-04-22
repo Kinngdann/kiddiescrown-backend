@@ -6,7 +6,7 @@ const PreContestant = require('../models/preUserSchema');
 function stringify(n){
 	n = '00' + n.toString();
 	return `${n.slice(-3)}`;
-}
+};
 
 exports.newUser = async (req, res) => {
 	try {
