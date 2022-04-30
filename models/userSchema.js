@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
 	description: String,
 	picture: String,
 	location: String,
+	disabled: {
+		type: Boolean,
+		default: false
+	},
 	phone: {
 		phone1: String,
 		phone2: String
@@ -31,7 +35,6 @@ const userSchema = new mongoose.Schema({
 	log: [{ 
 		voteCount: Number,
 		time: String,
-		voter: String,
 		method: String
 	}],
 	poster: String,

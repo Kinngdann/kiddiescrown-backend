@@ -1,7 +1,5 @@
 const Contestant = require('../models/userSchema');
 const PreContestant = require('../models/preUserSchema');
-// const stringify = require('../utils/stringifyID');
-
 
 function stringify(n){
 	n = '00' + n.toString();
@@ -59,7 +57,6 @@ exports.preNew = async (req, res) => {
 	}
 }
 
-
 exports.getusers = async (req, res) => {
 	const getUsers = await Contestant.find();
 	res.status(200).json({
@@ -70,119 +67,61 @@ exports.getusers = async (req, res) => {
 
 exports.getuser = async (req, res) => {
 	try {
-		const userData = await Contestant.findOne({ id: req.params.id });
-		res.status(200).json({
-			success: true,
-			data: userData,
-		});
-	} catch (error) {
-		console.log('error', error);
-		console.log('error message', error.message);
-		res.status(500).json({
-			success: false,
-			data: error.message,
-			msg: 'some thing went wrong',
-		});
-	}
+        const user = await Contestant.findOne({
+            id: req.params.id,
+            // disabled: false
+        });
+
+        const votes = await Contestant.find({}).select('votes.stage1');
+        const scores = votes.map(
+            vote => vote.votes.stage1
+        ).sort((a, b) => b-a);
+
+        let position = {};
+        for (let i = 0; i < scores.length; i++){
+            if (user.votes.stage1 === scores[i]){
+                position.index = i + 1;
+                position.nextScore = scores[i-1];
+            }
+        };
+		// res.send({...user, ...position});
+		res.json({
+			user,
+			position
+		})
+
+    } catch (error) {
+        console.log('error', error);
+        console.log('error message', error.message);
+        res.status(500).json({
+            success: false,
+            data: error.message,
+            msg: 'some thing went wrong',
+        });
+    }
 };
 
-exports.updateUser = async (req, res) => {
-	try {
-		const updatedUser = await Contestant.findOneAndUpdate(
-			{ id: req.params.id },
-			req.body,
-			{ new: true }
-		);
-		res.status(200).json({
-			success: true,
-			data: updatedUser,
-		});
-	} catch (error) {
-		console.log('error', error);
-		console.log('error message', error.message);
-		res.status(500).json({
-			success: false,
-			data: error.message,
-			msg: 'some thing went wrong',
-		});
-	}
-};
+exports.updateVote = async (req, res) => {
+    const {voteCount, method } = req.body;
+    const log = {
+		// time: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+		time: new Date()+'',
+        voteCount,
+        method,
+    }
 
-
-exports.deleteUser = async (req, res) => {
-	try {
-		await Contestant.findOneAndRemove({ id: req.params.id });
-		res.status(200).json({
-			success: true,
-			data: null,
-		});
-	} catch (error) {
-		console.log('error', error);
-		console.log('error message', error.message);
-		res.status(500).json({
-			success: false,
-			data: error.message,
-			msg: 'some thing went wrong',
-		});
-	}
-};
-
-exports.updateLog = async (req, res) => {
-	try {
-		const logObject = {
-			time: Date.now(),
-			voteCount: req.body.log,
-		};
-
-		const logData = await Contestant.findOneAndUpdate(
-			{ id: req.params.id },
-			{ $push: { log: logObject } },
-			{ new: true }
-		);
-
-		res.status(200).json({
-			success: true,
-			data: logData,
-		});
-	} catch (error) {
-		console.log('error', error);
-		console.log('error message', error.message);
-		res.status(500).json({
-			success: false,
-			data: error.message,
-			msg: 'some thing went wrong',
-		});
-	}
-};
-
-/*
-exports.uploadCampaignPic = async (req, res) => {
-
-
-};
-*/
-
-exports.updatePicture = async (req, res) => {
-	try {
-		const user = await Contestant.findOneAndUpdate(
-			{ id: req.params.id },
-			{
-				$set: { pictures: req.files.length > 0 ? req.files[0].path : null },
-			},
-			{ new: true }
-		);
-
-		res.status(200).json({
-			success: true,
-			data: user,
-		});
-	} catch (error) {
-		console.log('error', error);
-		console.log('error message', error.message);
-		res.status(500).json({
-			success: false,
-			data: error.message,
-			msg: 'some thing went wrong',
-		});
-	}
-};
+    try {
+        const user = await Contestant.findOneAndUpdate(
+            {id: req.params.id},
+            {
+                $inc: {'votes.stage1': voteCount},
+                $push: {log}
+            },
+            {new: true}
+        ).select('votes log');
+    
+        res.send(user);
+    } catch (error) {
+        console.log(error);
+    }
+}
