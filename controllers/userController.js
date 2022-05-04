@@ -104,7 +104,6 @@ exports.getuser = async (req, res) => {
 exports.updateVote = async (req, res) => {
     const {voteCount, method } = req.body;
     const log = {
-		// time: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
 		time: new Date()+'',
         voteCount,
         method,
@@ -127,16 +126,15 @@ exports.updateVote = async (req, res) => {
 }
 
 exports.imageupdate = async (req, res) => {
-	// console.log(req);
-
+	// console.log(req.file);
     try {
 		if (req.file){
-			const picture = req.file.path;
-			const parsed = req.body;
-			// const parsed = JSON.parse(req.body.user);
+			// const picture = req.file.path;
+			// const parsed = req.body;
+			const parsed = JSON.parse(req.body.user);
 			const user = await Contestant.findOneAndUpdate(
 				{id: parsed.id},
-				{'picture': picture},
+				{'picture': req.file.path},
 				{new: true}
 			);
 			res.send(user);
