@@ -8,7 +8,8 @@ const {
 	preNew,
 	getusers,
 	getuser,
-	updateVote
+	updateVote,
+	imageupdate
 } = require('../controllers/userController');
 
 const fileType = {
@@ -35,5 +36,6 @@ router.post('/pre-register', preNew);
 router.get('/getUsers', getusers);
 router.get('/getUser/:id', getuser);
 router.post('/updateVote/:id', updateVote);
+router.post('/image-upload', upload.single('picture'), imageupdate);
 
 module.exports = router;

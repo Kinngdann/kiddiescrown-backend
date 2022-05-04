@@ -125,3 +125,24 @@ exports.updateVote = async (req, res) => {
         console.log(error);
     }
 }
+
+exports.imageupdate = async (req, res) => {
+	// console.log(req);
+
+    try {
+		if (req.file){
+			const picture = req.file.path;
+			const parsed = req.body;
+			// const parsed = JSON.parse(req.body.user);
+			const user = await Contestant.findOneAndUpdate(
+				{id: parsed.id},
+				{'picture': picture},
+				{new: true}
+			);
+			res.send(user);
+		}
+        
+    } catch (error) {
+        console.log(error);
+    }
+};
