@@ -9,7 +9,10 @@ const {
 	getusers,
 	getuser,
 	updateVote,
-	imageupdate
+	imageupdate,
+	// transferVotes
+	// disableUsers
+	// addDisabledProps
 } = require('../controllers/userController');
 
 const fileType = {
@@ -37,5 +40,8 @@ router.get('/getUsers', getusers);
 router.get('/getUser/:id', getuser);
 router.post('/updateVote/:id', updateVote);
 router.post('/image-upload', upload.single('picture'), imageupdate);
+// router.post('/transferVotes', transferVotes);
+// router.post('/disableUsers', disableUsers);
+// router.post('/addDisabledProps', addDisabledProps);
 
 module.exports = router;

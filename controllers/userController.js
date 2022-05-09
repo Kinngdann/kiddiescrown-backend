@@ -55,31 +55,34 @@ exports.preNew = async (req, res) => {
 			reason: error.message,
 		});
 	}
-}
+};
 
 exports.getusers = async (req, res) => {
-	const getUsers = await Contestant.find();
-	res.status(200).json({
-		success: true,
-		data: getUsers,
-	});
+	try {
+		const users = await Contestant.find(
+			{disabled: false}
+		);
+		res.send(users)
+	} catch (error) {
+		console.log(error)
+	}
 };
 
 exports.getuser = async (req, res) => {
 	try {
         const user = await Contestant.findOne({
             id: req.params.id,
-            // disabled: false
+            disabled: false
         });
 
-        const votes = await Contestant.find({}).select('votes.stage1');
+        const votes = await Contestant.find({}).select('votes.stage2');
         const scores = votes.map(
-            vote => vote.votes.stage1
+            vote => vote.votes.stage2
         ).sort((a, b) => b-a);
 
         let position = {};
         for (let i = 0; i < scores.length; i++){
-            if (user.votes.stage1 === scores[i]){
+            if (user.votes.stage2 === scores[i]){
                 position.index = i + 1;
                 position.nextScore = scores[i-1];
             }
@@ -111,9 +114,12 @@ exports.updateVote = async (req, res) => {
 
     try {
         const user = await Contestant.findOneAndUpdate(
-            {id: req.params.id},
+			{
+				id: req.params.id,
+				disabled: false
+			},
             {
-                $inc: {'votes.stage1': voteCount},
+                $inc: {'votes.stage2': voteCount},
                 $push: {log}
             },
             {new: true}
@@ -144,3 +150,82 @@ exports.imageupdate = async (req, res) => {
         console.log(error);
     }
 };
+
+/*
+exports.disableUsers = async (req, res) => {
+	try {
+		const users = await Contestant.find();
+		let count = 0
+		for(let i = 0; i < users.length; i++){
+			if (users[i].votes.stage1 < 200 ){
+				const user = await Contestant.findOneAndUpdate(
+					{id: users[i].id},
+					{disabled: true}
+				);
+				count++;
+				console.log(count);
+			}
+		}
+		res.json({
+			success: true,
+			disabledAccounts: count
+		});
+
+	} catch (error) {
+		console.log(error)
+	}
+};
+*/
+
+/*
+exports.transferVotes = async (req, res) => {
+	try {
+		const users = await Contestant.find({disabled: false});
+		let count = 0
+		for (let i = 0; i < users.length; i++){
+			if(users[i].votes.stage1 > 200){
+				const remainder = users[i].votes.stage1 - 200;
+				const votes = {
+					stage1: 200,
+					stage2: remainder,
+					stage3: 0
+				}
+				const user = await Contestant.findOneAndUpdate(
+					{id: users[i].id},
+					{votes}
+				)
+				count++
+				console.log(count);
+			}
+		}
+		res.json({
+			success: true,
+			body: count
+		})
+	} catch (error) {
+		console.log(error);
+	}
+}
+*/
+
+/*
+exports.addDisabledProps = async (req, res) => {
+	try {
+		let count = 0;
+		const users = await Contestant.find();
+		for(let i = 0; i < users.length; i++){
+			const user = await Contestant.findOneAndUpdate(
+				{id: users[i].id},
+				{
+					disabled: false
+				}
+			)
+			if (user) count++;
+			console.log(count)
+		}
+		res.send(count);
+	} catch (error) {
+		console.log(error)
+	}
+}
+*/
