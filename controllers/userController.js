@@ -75,7 +75,7 @@ exports.getuser = async (req, res) => {
             disabled: false
         });
 
-        const votes = await Contestant.find({}).select('votes.stage2');
+        const votes = await Contestant.find({disabled: false}).select('votes.stage2');
         const scores = votes.map(
             vote => vote.votes.stage2
         ).sort((a, b) => b-a);
