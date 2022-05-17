@@ -10,6 +10,7 @@ const {
 	getuser,
 	updateVote,
 	imageupdate,
+	getTop5
 	// transferVotes
 	// disableUsers
 	// addDisabledProps
@@ -40,6 +41,7 @@ router.get('/getUsers', getusers);
 router.get('/getUser/:id', getuser);
 router.post('/updateVote/:id', updateVote);
 router.post('/image-upload', upload.single('picture'), imageupdate);
+router.get('/getTop5', getTop5);
 // router.post('/transferVotes', transferVotes);
 // router.post('/disableUsers', disableUsers);
 // router.post('/addDisabledProps', addDisabledProps);

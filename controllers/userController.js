@@ -81,17 +81,18 @@ exports.getuser = async (req, res) => {
         ).sort((a, b) => b-a);
 
         let position = {};
-        for (let i = 0; i < scores.length; i++){
-            if (user.votes.stage2 === scores[i]){
-                position.index = i + 1;
-                position.nextScore = scores[i-1];
-            }
-        };
-		// res.send({...user, ...position});
+
+		scores.forEach((score, index) => {
+			if (score === user.votes.stage2){
+				position.index = index+1;
+                position.nextScore = (scores[index-1] - user.votes.stage2) + 20;
+			}
+		});
+
 		res.json({
 			user,
 			position
-		})
+		});
 
     } catch (error) {
         console.log('error', error);
@@ -150,6 +151,21 @@ exports.imageupdate = async (req, res) => {
         console.log(error);
     }
 };
+
+exports.getTop5 = async (req, res) => {
+	try {
+		const users = await Contestant.find(
+			{disabled: false}
+		);
+		
+		users.sort((a, b) => {
+			return a.votes.stage2 > b.votes.stage2 ? -1 : 1;
+		});
+		res.send(users.slice(0, 5));
+	} catch (error) {
+		console.log(error)
+	}
+}
 
 /*
 exports.disableUsers = async (req, res) => {
