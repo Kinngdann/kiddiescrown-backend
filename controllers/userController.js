@@ -75,17 +75,17 @@ exports.getuser = async (req, res) => {
             disabled: false
         });
 
-        const votes = await Contestant.find({disabled: false}).select('votes.stage2');
+        const votes = await Contestant.find({disabled: false}).select('votes.stage3');
         const scores = votes.map(
-            vote => vote.votes.stage2
+            vote => vote.votes.stage3
         ).sort((a, b) => b-a);
 
         let position = {};
 
 		scores.forEach((score, index) => {
-			if (score === user.votes.stage2){
+			if (score === user.votes.stage3){
 				position.index = index+1;
-                position.nextScore = (scores[index-1] - user.votes.stage2) + 20;
+                position.nextScore = (scores[index-1] - user.votes.stage3) + 20;
 			}
 		});
 
@@ -159,7 +159,7 @@ exports.getTop5 = async (req, res) => {
 		);
 		
 		users.sort((a, b) => {
-			return a.votes.stage2 > b.votes.stage2 ? -1 : 1;
+			return a.votes.stage3 > b.votes.stage3 ? -1 : 1;
 		});
 		res.send(users.slice(0, 5));
 	} catch (error) {
