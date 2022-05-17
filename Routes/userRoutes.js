@@ -10,8 +10,8 @@ const {
 	getuser,
 	updateVote,
 	imageupdate,
-	getTop5
-	// transferVotes
+	getTop5,
+	transferVotes
 	// disableUsers
 	// addDisabledProps
 } = require('../controllers/userController');

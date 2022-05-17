@@ -120,7 +120,7 @@ exports.updateVote = async (req, res) => {
 				disabled: false
 			},
             {
-                $inc: {'votes.stage2': voteCount},
+                $inc: {'votes.stage3': voteCount},
                 $push: {log}
             },
             {new: true}
@@ -170,10 +170,10 @@ exports.getTop5 = async (req, res) => {
 /*
 exports.disableUsers = async (req, res) => {
 	try {
-		const users = await Contestant.find();
+		const users = await Contestant.find({disabled: false});
 		let count = 0
 		for(let i = 0; i < users.length; i++){
-			if (users[i].votes.stage1 < 200 ){
+			if (users[i].votes.stage2 < 300 ){
 				const user = await Contestant.findOneAndUpdate(
 					{id: users[i].id},
 					{disabled: true}
@@ -191,20 +191,18 @@ exports.disableUsers = async (req, res) => {
 		console.log(error)
 	}
 };
-*/
 
-/*
 exports.transferVotes = async (req, res) => {
 	try {
 		const users = await Contestant.find({disabled: false});
 		let count = 0
 		for (let i = 0; i < users.length; i++){
-			if(users[i].votes.stage1 > 200){
-				const remainder = users[i].votes.stage1 - 200;
+			if(users[i].votes.stage2 > 300){
+				const remainder = users[i].votes.stage2 - 300;
 				const votes = {
 					stage1: 200,
-					stage2: remainder,
-					stage3: 0
+					stage2: 300,
+					stage3: remainder
 				}
 				const user = await Contestant.findOneAndUpdate(
 					{id: users[i].id},
@@ -221,8 +219,8 @@ exports.transferVotes = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 	}
-}
-*/
+};
+
 
 /*
 exports.addDisabledProps = async (req, res) => {
